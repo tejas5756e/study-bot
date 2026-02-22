@@ -1,6 +1,5 @@
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 import os
 
@@ -16,30 +15,26 @@ llm = ChatGroq(
 SYSTEM_PROMPT = """
 You are a Study Bot.
 You help students with academic and learning-related questions.
-Use previous conversation context to give better answers.
 Explain concepts clearly in simple language.
 """
 
 def get_response(user_input):
-    messages = [SystemMessage(content=SYSTEM_PROMPT)]
-
     try:
+        messages = [SystemMessage(content=SYSTEM_PROMPT)]
+
         previous_chats = get_previous_chats()
         for chat in reversed(previous_chats):
             messages.append(HumanMessage(content=chat["user_message"]))
             messages.append(AIMessage(content=chat["bot_response"]))
-    except Exception as e:
-        print("CHAT HISTORY ERROR:", e)
 
-    try:
         messages.append(HumanMessage(content=user_input))
-        response = llm.invoke(messages).content
+
+        # ✅ FIX: use invoke correctly
+        response = llm(messages).content
+
         save_chat(user_input, response)
         return response
+
     except Exception as e:
-        print("LLM ERROR:", e)
-        return "AI service is temporarily unavailable."
-
-
-
-
+        print("ERROR IN CHATBOT:", e)
+        return "Sorry, something went wrong on the server."
