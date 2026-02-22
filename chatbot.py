@@ -29,12 +29,16 @@ def get_response(user_input):
 
         messages.append(HumanMessage(content=user_input))
 
-        # ✅ FIX: use invoke correctly
-        response = llm(messages).content
+        print("Sending to Groq...")
+        response = llm.invoke(messages)
 
-        save_chat(user_input, response)
-        return response
+        print("Groq response received")
+
+        answer = response.content
+        save_chat(user_input, answer)
+
+        return answer
 
     except Exception as e:
-        print("ERROR IN CHATBOT:", e)
-        return "Sorry, something went wrong on the server."
+        print("🔥 CHATBOT ERROR:", repr(e))
+        return "LLM error. Check server logs."
