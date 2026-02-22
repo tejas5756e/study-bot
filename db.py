@@ -21,5 +21,5 @@ def save_chat(user_message, bot_response):
     })
 
 def get_previous_chats(limit=5):
-    chats = collection.find().sort("_id", -1).limit(limit)
+    chats = collection.find({}, {"_id": 0}).sort("_id", -1).limit(limit)
     return list(chats)
