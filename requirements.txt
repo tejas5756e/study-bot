@@ -26,7 +26,6 @@ langgraph-sdk==0.3.8
 langsmith==0.7.5
 orjson==3.11.7
 ormsgpack==1.12.2
-packaging @ file:///C:/miniconda3/conda-bld/packaging_1761049101700/work
 pydantic==2.12.5
 pydantic_core==2.41.5
 pymongo==4.16.0
@@ -44,3 +43,4 @@ uuid_utils==0.14.0
 uvicorn==0.41.0
 xxhash==3.6.0
 zstandard==0.25.0
+
