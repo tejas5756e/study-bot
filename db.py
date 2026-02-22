@@ -2,28 +2,32 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
 load_dotenv()
 
-# Connect to MongoDB
-client = MongoClient(os.getenv("MONGO_URI"))
+def get_collection():
+    try:
+        client = MongoClient(
+            os.getenv("MONGO_URI"),
+            serverSelectionTimeoutMS=3000
+        )
+        db = client["study_bot"]
+        return db["chat_history"]
+    except Exception as e:
+        print("MongoDB connection error:", e)
+        return None
 
-# Create / use database
-db = client["study_bot"]
-
-# Create / use collection
-collection = db["chat_history"]
 
 def save_chat(user_message, bot_response):
-    collection.insert_one({
-        "user_message": user_message,
-        "bot_response": bot_response
-    })
+    collection = get_collection()
+    if collection:
+        collection.insert_one({
+            "user_message": user_message,
+            "bot_response": bot_response
+        })
+
 
 def get_previous_chats(limit=5):
-    chats = collection.find(
-        {},
-        {"_id": 0, "user_message": 1, "bot_response": 1}
-    ).sort("_id", -1).limit(limit)
-
-    return list(chats)
+    collection = get_collection()
+    if not collection:
+        return []
+    return list(collection.find().sort("_id", -1).limit(limit))
