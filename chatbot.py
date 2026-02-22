@@ -21,23 +21,25 @@ Explain concepts clearly in simple language.
 """
 
 def get_response(user_input):
-    try:
-        messages = [SystemMessage(content=SYSTEM_PROMPT)]
+    messages = [SystemMessage(content=SYSTEM_PROMPT)]
 
+    try:
         previous_chats = get_previous_chats()
         for chat in reversed(previous_chats):
             messages.append(HumanMessage(content=chat["user_message"]))
             messages.append(AIMessage(content=chat["bot_response"]))
+    except Exception as e:
+        print("CHAT HISTORY ERROR:", e)
 
+    try:
         messages.append(HumanMessage(content=user_input))
         response = llm.invoke(messages).content
-
         save_chat(user_input, response)
         return response
-
     except Exception as e:
-        print("ERROR IN CHATBOT:", e) 
-        return "Sorry, something went wrong on the server."
+        print("LLM ERROR:", e)
+        return "AI service is temporarily unavailable."
+
 
 
 
