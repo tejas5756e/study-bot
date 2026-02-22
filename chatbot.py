@@ -36,7 +36,8 @@ def get_response(user_input):
         return response
 
     except Exception as e:
-        print("ERROR IN CHATBOT:", e)   # 👈 ADD THIS
+        print("ERROR IN CHATBOT:", e) 
         return "Sorry, something went wrong on the server."
+
 
 
