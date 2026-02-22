@@ -21,27 +21,21 @@ Explain concepts clearly in simple language.
 """
 
 def get_response(user_input):
-    messages = []
+    try:
+        messages = [SystemMessage(content=SYSTEM_PROMPT)]
 
-    # System prompt
-    messages.append(("system", SYSTEM_PROMPT))
+        previous_chats = get_previous_chats()
+        for chat in reversed(previous_chats):
+            messages.append(HumanMessage(content=chat["user_message"]))
+            messages.append(AIMessage(content=chat["bot_response"]))
 
-    # Previous chat memory
-    previous_chats = get_previous_chats()
-    for chat in reversed(previous_chats):
-        messages.append(("human", chat["user_message"]))
-        messages.append(("ai", chat["bot_response"]))
+        messages.append(HumanMessage(content=user_input))
 
-    # Current user input
-    messages.append(("human", user_input))
+        response = llm.invoke(messages).content
 
-    # Convert to prompt
-    prompt = ChatPromptTemplate.from_messages(messages)
+        save_chat(user_input, response)
+        return response
 
-    # Invoke model correctly
-    response = llm.invoke(prompt.format_messages()).content
-
-    # Save to DB
-    save_chat(user_input, response)
-
-    return response
+    except Exception as e:
+        print("ERROR IN CHATBOT:", str(e))
+        return "Sorry, something went wrong on the server."
