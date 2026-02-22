@@ -25,24 +25,18 @@ def get_response(user_input):
         messages = [SystemMessage(content=SYSTEM_PROMPT)]
 
         previous_chats = get_previous_chats()
-
         for chat in reversed(previous_chats):
-            user_msg = chat.get("user_message")
-            bot_msg = chat.get("bot_response")
-        
-            if user_msg and bot_msg:
-                messages.append(HumanMessage(content=str(user_msg)))
-                messages.append(AIMessage(content=str(bot_msg)))
+            messages.append(HumanMessage(content=chat["user_message"]))
+            messages.append(AIMessage(content=chat["bot_response"]))
 
         messages.append(HumanMessage(content=user_input))
-
         response = llm.invoke(messages).content
 
         save_chat(user_input, response)
         return response
 
     except Exception as e:
-        print("ERROR IN CHATBOT:", str(e))
+        print("ERROR IN CHATBOT:", e)   # 👈 ADD THIS
         return "Sorry, something went wrong on the server."
 
 
