@@ -25,9 +25,11 @@ def get_response(user_input):
         messages = [SystemMessage(content=SYSTEM_PROMPT)]
 
         previous_chats = get_previous_chats()
+
         for chat in reversed(previous_chats):
-            messages.append(HumanMessage(content=chat["user_message"]))
-            messages.append(AIMessage(content=chat["bot_response"]))
+           if "user_message" in chat and "bot_response" in chat:
+               messages.append(HumanMessage(content=chat["user_message"]))
+               messages.append(AIMessage(content=chat["bot_response"]))
 
         messages.append(HumanMessage(content=user_input))
 
@@ -39,3 +41,4 @@ def get_response(user_input):
     except Exception as e:
         print("ERROR IN CHATBOT:", str(e))
         return "Sorry, something went wrong on the server."
+
